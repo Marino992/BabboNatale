@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Babbo Natale vs Noi</title>
+  <title>Colpisci Babbo</title>
+
   <style>
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
@@ -24,7 +25,6 @@
       width: 100%;
       max-width: 380px;
       box-shadow: 0 12px 32px rgba(0,0,0,0.45);
-    }
     }
 
     h1 {
@@ -71,11 +71,7 @@
       border-radius: 12px;
       cursor: pointer;
       font-size: clamp(0.95rem, 4vw, 1.05rem);
-      margin: 6px 0;
-    }
-
-    button:hover {
-      background: #f0f0f0;
+      margin-top: 10px;
     }
 
     .message {
@@ -84,56 +80,65 @@
     }
   </style>
 </head>
+
 <body>
   <div class="game">
-    <h1>Babbo ha dimenticato il regalo 🎁</h1>
-    <p>Siamo arrabbiati! Colpisci Babbo Natale!</p>
-
-    <button id="startBtn">Start</button>
+    <h1>Babbo ha dimenticato il tuo regalo 🎁 che 💩</h1>
+    <p>Uccidilo prima che il freddo ti congeli 🥶</p>
+    <p>Premi su di lui 80 volte</p>
+    <p>Non far arrivare a zero la barra salute</p>
 
     <div id="santa" class="emoji">🎅</div>
 
-    <div class="stats">Colpi a Babbo: <span id="hits">0</span> / 79</div>
+    <div class="stats">
+      Colpiscilo 💪: <span id="hits">0</span> / 80
+    </div>
 
-    <div class="stats">La nostra salute</div>
+    <div class="stats">Salute</div>
     <div class="health-bar">
       <div id="playerHealth" class="health"></div>
     </div>
 
-    <div class="message" id="message"></div>
+    <div id="message" class="message"></div>
 
-    <button onclick="resetGame()">Ricomincia</button>
+    <button onclick="resetGame()">Ricomincia a picchiarlo 💪</button>
   </div>
 
   <script>
     let santaHits = 0;
-    let started = false;
-    let attackInterval = null;
     let playerHealth = 100;
     let gameOver = false;
+    let attackInterval = null;
+    let started = false;
 
     const hitsEl = document.getElementById('hits');
     const healthEl = document.getElementById('playerHealth');
     const messageEl = document.getElementById('message');
     const santaEl = document.getElementById('santa');
-    const startBtn = document.getElementById('startBtn');
 
     santaEl.addEventListener('click', () => {
-      if (gameOver || !started) return;
+      if (gameOver) return;
+
+      // AVVIO AL PRIMO CLICK
+      if (!started) {
+        started = true;
+        messageEl.textContent = 'Colpisci forte, altrimenti non muore 💥';
+        attackInterval = setInterval(santaAttack, 1200);
+      }
 
       santaHits++;
       hitsEl.textContent = santaHits;
 
-      if (santaHits >= 79) {
+      if (santaHits >= 80) {
         gameOver = true;
         clearInterval(attackInterval);
         santaEl.textContent = '☠️';
-        messageEl.textContent = 'Babbo Natale è stato sconfitto! 🎉';
+        messageEl.textContent = 'Babbo Natale è morto, evviva!! 🎉';
       }
     });
 
     function santaAttack() {
-      if (gameOver || !started) return;
+      if (gameOver) return;
 
       playerHealth -= Math.floor(Math.random() * 6) + 6; // 6–11 danni
       if (playerHealth < 0) playerHealth = 0;
@@ -143,7 +148,7 @@
       if (playerHealth === 0) {
         gameOver = true;
         clearInterval(attackInterval);
-        messageEl.textContent = 'Babbo Natale ti ha sconfitto! 😵';
+        messageEl.textContent = 'Sei morto congelato 😵';
       }
     }
 
@@ -152,19 +157,17 @@
       playerHealth = 100;
       gameOver = false;
       started = false;
-      santaEl.textContent = '🎅';
+
       hitsEl.textContent = '0';
       healthEl.style.width = '100%';
       messageEl.textContent = '';
-      if (attackInterval) clearInterval(attackInterval);
-    }
+      santaEl.textContent = '🎅';
 
-    startBtn.addEventListener('click', () => {
-      if (started) return;
-      started = true;
-      messageEl.textContent = 'Il combattimento è iniziato! 💥';
-      attackInterval = setInterval(santaAttack, 1200);
-    });
+      if (attackInterval) {
+        clearInterval(attackInterval);
+        attackInterval = null;
+      }
+    }
   </script>
 </body>
 </html>
